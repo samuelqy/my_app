@@ -154,7 +154,7 @@ class Item extends StatefulWidget {
   State<Item> createState() => _ItemState();
 }
 
-class _ItemState extends State<Item> {
+class _ItemState extends State<Item> with AutomaticKeepAliveClientMixin {
   bool _selected = false;
 
   void _select() {
@@ -182,8 +182,10 @@ class _ItemState extends State<Item> {
         onPressed: _select,
         child: Text(widget.name, style: const TextStyle(fontSize: 20.0, color: Colors.black))
     );
-
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 ///////////////////////////////////////////////////////
@@ -223,7 +225,6 @@ class _MyPaginationState extends State<MyPagination> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     const size = 70.0;
     return Row( mainAxisAlignment: MainAxisAlignment.center,
                children: [

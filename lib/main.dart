@@ -254,6 +254,152 @@ class _MyPaginationState extends State<MyPagination> {
 
 
 ///////////////////////////////////////////////////////
+////////////           录音         //////////////////
+enum Status {
+  none,
+  recording,
+  deciding
+}
+
+enum Action{
+  publish,
+  cancel,
+  redo
+}
+
+class Record extends StatefulWidget {
+  const Record({super.key});
+  @override
+  State<Record> createState() => _RecordState();
+}
+
+class _RecordState extends State<Record> {
+  Status status = Status.none;
+
+  void _reset() {
+    setState(() {
+      status = Status.none;
+    });
+  }
+  void _record() {
+    setState(() {
+      status = Status.recording;
+    });
+  }
+
+  void _decide() {
+    setState(() {
+      status = Status.deciding;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    var buttonSize1 = Size(width*0.25, 80);
+    const textStyle = TextStyle(fontSize: 30.0, color: Colors.black);
+    switch(status){
+      case Status.none:
+        {
+          return OutlinedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(buttonSize1),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+                  ),
+                  onPressed: _record,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                       SizedBox(width: 20),
+                      Icon(Icons.mic, color: Colors.black, size: 40),
+                       SizedBox(width: 30),
+                       Text('点击开始录制需要的帮助', style: textStyle),
+                    ],
+                  )
+              );
+        }
+      case Status.recording:{
+        return  OutlinedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(buttonSize1),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+                  ),
+                  onPressed: _decide,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: const [
+                       SizedBox(width: 20),
+                        SizedBox(
+                          width: 42.0,
+                          height: 42.0,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.red
+                            ),
+                          ),
+                        ),
+                       SizedBox(width: 30),
+                       Text('停止录制', style: textStyle),
+                    ],
+                  )
+              );
+      }
+      case Status.deciding:{
+        return  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:  [
+                       OutlinedButton(
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all(buttonSize1),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+                        ),
+                        onPressed:  () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text(''),
+          content: const Text('发布成功，稍后有人工客服联系你', style: textStyle,),
+          actions: <Widget>[
+            OutlinedButton(
+              style: ButtonStyle(minimumSize: MaterialStateProperty.all(buttonSize1)),
+              onPressed: () {
+                Navigator.pop(context);
+                _reset();
+                },
+              child: const Text('好的', style: textStyle),
+            ),
+          ],
+        ),
+      ),
+                        child: const Text('发布', style: textStyle),
+                      ),
+                      const SizedBox(width: 30),
+                      OutlinedButton(
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all(buttonSize1),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+                        ),
+                        onPressed: _reset,
+                        child: const Text('取消', style: textStyle),
+                      ),
+                      const SizedBox(width: 30),
+                      OutlinedButton(
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all(buttonSize1),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
+                        ),
+                        onPressed: _record,
+                        child: const Text('重新录制', style: textStyle),
+                      ),
+                    ],
+                  );
+      }
+    }
+
+  }
+}
+
+
+///////////////////////////////////////////////////////
 class SecondRoute extends StatelessWidget {
   const SecondRoute({super.key});
 
@@ -330,23 +476,7 @@ class SecondRoute extends StatelessWidget {
             ),
 
           MyPagination(controller: buttonCarouselController),
-           OutlinedButton(
-                  style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(buttonSize1),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))),
-                  ),
-                  onPressed: () => {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                       SizedBox(width: 20),
-                      Icon(Icons.mic, color: Colors.black, size: 40),
-                       SizedBox(width: 30),
-                       Text('点击开始录制需要的帮助', style: textStyle),
-                    ],
-                  )
-
-              )
+          const Record(),
         ],
       )
     );
